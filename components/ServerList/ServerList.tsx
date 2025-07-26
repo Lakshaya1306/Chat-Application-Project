@@ -6,7 +6,10 @@ import { useDiscordContext } from '@/contexts/DiscordContext';
 import CreateServerForm from './CreateServerForm';
 import Link from 'next/link';
 import { Channel } from 'stream-chat';
-
+type ChannelData = {
+  server?: string;
+  image?: string;
+};
 const ServerList = () => {
   const { client } = useChatContext();
   const { server: activeServer, changeServer } = useDiscordContext();
@@ -19,12 +22,14 @@ const ServerList = () => {
     });
     const serverSet: Set<DiscordServer> = new Set(
       channels
-        .map((channel: Channel) => {
-          return {
-            name: (channel.data?.data?.server as string) ?? 'Unknown',
-            image: channel.data?.data?.image,
-          };
-        })
+      .map((channel: Channel) => {
+        const data = channel.data?.data as ChannelData;
+
+        return {
+          name: data?.server ?? 'Unknown',
+          image: data?.image,
+        };
+      })
         .filter((server: DiscordServer) => server.name !== 'Unknown')
         .filter(
           (server: DiscordServer, index, self) =>
