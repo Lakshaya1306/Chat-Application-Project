@@ -7,10 +7,25 @@ import { Channel, ChannelFilters, StreamChat } from 'stream-chat';
 import { DefaultStreamChatGenerics } from 'stream-chat-react';
 import { v4 as uuid } from 'uuid';
 
+// Define custom channel data interface
+interface CustomChannelData {
+  server?: string;
+  category?: string;
+  image?: string;
+  [key: string]: any;
+}
+
+// Extend the default generics to include our custom data structure
+interface CustomStreamChatGenerics extends DefaultStreamChatGenerics {
+  channelType: {
+    data?: CustomChannelData;
+  } & DefaultStreamChatGenerics['channelType'];
+}
+
 type DiscordState = {
   server?: DiscordServer;
   callId: string | undefined;
-  channelsByCategories: Map<string, Array<Channel<DefaultStreamChatGenerics>>>;
+  channelsByCategories: Map<string, Array<Channel<CustomStreamChatGenerics>>>;
   changeServer: (server: DiscordServer | undefined, client: StreamChat) => void;
   createServer: (
     client: StreamChat,
@@ -46,6 +61,7 @@ const initialValue: DiscordState = {
 };
 
 const DiscordContext = createContext<DiscordState>(initialValue);
+
 export const DiscordContextProvider: any = ({
   children,
 }: {
@@ -70,16 +86,19 @@ export const DiscordContextProvider: any = ({
       const channels = await client.queryChannels(filters);
       const channelsByCategories = new Map<
         string,
-        Array<Channel<DefaultStreamChatGenerics>>
+        Array<Channel<CustomStreamChatGenerics>>
       >();
+      
       if (server) {
         const categories = new Set(
           channels
             .filter((channel) => {
-              return channel.data?.data?.server === server.name;
+              const channelData = channel.data?.data as CustomChannelData;
+              return channelData?.server === server.name;
             })
             .map((channel) => {
-              return channel.data?.data?.category;
+              const channelData = channel.data?.data as CustomChannelData;
+              return channelData?.category || 'Uncategorized';
             })
         );
 
@@ -87,16 +106,18 @@ export const DiscordContextProvider: any = ({
           channelsByCategories.set(
             category,
             channels.filter((channel) => {
+              const channelData = channel.data?.data as CustomChannelData;
               return (
-                channel.data?.data?.server === server.name &&
-                channel.data?.data?.category === category
+                channelData?.server === server.name &&
+                channelData?.category === category
               );
-            })
+            }) as Array<Channel<CustomStreamChatGenerics>>
           );
         }
       } else {
-        channelsByCategories.set('Direct Messages', channels);
+        channelsByCategories.set('Direct Messages', channels as Array<Channel<CustomStreamChatGenerics>>);
       }
+      
       setMyState((myState) => {
         return { ...myState, server, channelsByCategories };
       });
