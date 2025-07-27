@@ -26,19 +26,18 @@ A full-featured real-time chat platform built using Next.js, TailwindCSS, Clerk 
 
 ## 🗂️ Folder Structure
 
-<details>
-  <summary>📁 Folder Structure (click to expand)</summary>
-  chat-app
-├── components            # Reusable UI components
-├── context               # Global state/context providers
-├── lib                   # API clients (Stream, Clerk)
-├── pages                 # Next.js routes and logic
-├── public                # Static assets (images, icons, etc.)
-├── styles                # Tailwind config and global styles
-├── .env.local            # Environment variables (not committed)
-├── .gitignore            # Git ignore rules
-└── README.md             # Project documentation
-</details>
+| Folder/File       | Description                              |
+|-------------------|------------------------------------------|
+| `components/`     | Reusable UI components                   |
+| `context/`        | Global state/context providers           |
+| `lib/`            | API clients (Stream, Clerk)              |
+| `pages/`          | Next.js routes and logic                 |
+| `public/`         | Static assets (images, logos, etc.)      |
+| `styles/`         | Tailwind configuration and styles        |
+| `.env.local`      | Environment variables (not committed)    |
+| `.gitignore`      | Git ignore rules                         |
+| `README.md`       | Project documentation                    |
+
 
 ## 🎯 Project Goals
 
